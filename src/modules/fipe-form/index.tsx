@@ -1,11 +1,10 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import { SelectInput } from "@/components/SelectInput"
-import { Button } from "./Button"
+import { Button } from "@/components/Button"
+import { useFipeContext } from "@/contexts/AppContext"
 
 type FormProps = {
   brand: string | null
@@ -21,6 +20,8 @@ const url = "https://parallelum.com.br/fipe/api/v1/carros/marcas"
 
 export function FipeForm({ brands }: Props) {
   const router = useRouter()
+  const { updateCarOptions } = useFipeContext()
+
   const { register, handleSubmit, watch, setValue, resetField } = useForm<FormProps>()
   const [options, setOptions] = useState({
     models: [],
@@ -96,7 +97,10 @@ export function FipeForm({ brands }: Props) {
   const submitBtnDisabled = !brand || !model || !year
 
   const onSubmit: SubmitHandler<FormProps> = async ({ brand, model, year }) => {
-    router.push(`result?marca=${brand}&modelo=${model}&ano=${year}`)
+    if (!brand || !model || !year) return
+
+    updateCarOptions({ brand, model, year })
+    router.push("/result")
   }
 
   useEffect(() => {

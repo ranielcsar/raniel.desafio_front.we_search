@@ -1,4 +1,3 @@
-"use client"
 import { ThemeProvider as Provider, createTheme } from "@mui/material"
 import { PropsWithChildren } from "react"
 
