@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import { SelectInput } from "@/components/SelectInput"
 import { Button } from "./Button"
+import { CircularProgress } from "@mui/material"
 
 type FormProps = {
   brand: string | null
@@ -27,6 +28,8 @@ export function FipeForm({ brands }: Props) {
     years: [],
   })
 
+  let [isSubmiting, startTransition] = useTransition()
+
   const brand = watch("brand", null)
   const model = watch("model", null)
   const year = watch("year", null)
@@ -34,9 +37,8 @@ export function FipeForm({ brands }: Props) {
   const [loading, setLoading] = useState({
     models: false,
     years: false,
-    submit: false,
   })
-  function handleLoading(key: "models" | "years" | "submit", value: boolean) {
+  function handleLoading(key: "models" | "years", value: boolean) {
     setLoading((prev) => ({
       ...prev,
       [key]: value,
@@ -98,12 +100,11 @@ export function FipeForm({ brands }: Props) {
 
   const onSubmit: SubmitHandler<FormProps> = async ({ brand, model, year }) => {
     try {
-      handleLoading("submit", true)
-      router.push(`result?marca=${brand}&modelo=${model}&ano=${year}`)
+      startTransition(() => {
+        router.push(`result?marca=${brand}&modelo=${model}&ano=${year}`)
+      })
     } catch (err) {
       console.error(err)
-    } finally {
-      handleLoading("submit", false)
     }
   }
 
@@ -164,14 +165,14 @@ export function FipeForm({ brands }: Props) {
       )}
 
       <Button
-        className="w-max m-auto mt-4 py-2 px-8 normal-case"
+        className="w-max m-auto mt-4 py-2 px-8 normal-case text-white"
         size="large"
         variant="contained"
         type="submit"
         form="fipe-form"
-        disabled={submitBtnDisabled}
+        disabled={submitBtnDisabled || isSubmiting}
       >
-        {loading.submit ? "Carregando..." : "Consultar preço"}
+        {isSubmiting ? <CircularProgress size={30} color="inherit" /> : "Consultar preço"}
       </Button>
     </form>
   )
