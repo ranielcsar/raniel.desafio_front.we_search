@@ -7,3 +7,10 @@
 - React hook form
 - MaterialUI
 - TailwindCSS
+
+### Tecnologias usadas [branch pages]:
+- NextJS 14 [Pages folder]
+- ContextAPI
+- React hook form
+- MaterialUI
+- TailwindCSS
