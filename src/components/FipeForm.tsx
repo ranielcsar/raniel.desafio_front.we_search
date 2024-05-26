@@ -17,7 +17,7 @@ type Props = {
   brands: { codigo: string; nome: string }[]
 }
 
-const url = process.env.NEXT_PUBLIC_API_URL as string
+const url = process.env.API_URL as string
 
 export function FipeForm({ brands }: Props) {
   const router = useRouter()

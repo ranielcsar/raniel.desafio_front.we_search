@@ -22,9 +22,11 @@ export default async function Home() {
   )
 }
 
+const url = process.env.API_URL as string
+
 async function getBrands() {
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL as string)
+    const response = await fetch(url)
     const data = await response.json()
 
     return data
