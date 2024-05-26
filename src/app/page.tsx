@@ -24,7 +24,7 @@ export default async function Home() {
 
 async function getBrands() {
   try {
-    const response = await fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas")
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL as string)
     const data = await response.json()
 
     return data
