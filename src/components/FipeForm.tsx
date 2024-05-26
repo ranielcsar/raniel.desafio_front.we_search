@@ -171,7 +171,7 @@ export function FipeForm({ brands }: Props) {
         form="fipe-form"
         disabled={submitBtnDisabled}
       >
-        {loading.submit ? "Carregando..." : "Consultar"}
+        {loading.submit ? "Carregando..." : "Consultar preço"}
       </Button>
     </form>
   )
