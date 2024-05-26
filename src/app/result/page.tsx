@@ -15,15 +15,15 @@ export default async function ResultPage({
 
   return (
     <main className="bg-light-green h-screen w-full flex flex-col text-gray-700">
-      <div className="flex flex-col w-1/2 h-96 mx-auto my-24 justify-between">
+      <div className="flex flex-col w-full px-4 md:w-1/2 h-96 mx-auto my-24 justify-between">
         <BackBtn />
 
-        <div className="flex flex-col items-center gap-4">
-          <h2 className="text-2xl font-bold text-gray-700">
+        <div className="flex flex-col text-center items-center gap-4">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-700">
             Tabela Fipe: Preço {data.Marca} {data.Modelo} {data.AnoModelo}
           </h2>
 
-          <span className="p-4 py-2 text-xl bg-green-emereald text-white font-bold rounded-full">
+          <span className="p-4 py-2 text-lg md:text-xl bg-green-emereald text-white font-bold rounded-full">
             {data.Valor}
           </span>
 

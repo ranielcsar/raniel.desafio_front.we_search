@@ -8,11 +8,13 @@ export default async function Home() {
     <main className="flex w-full h-screen bg-light-pink">
       <Container maxWidth="lg" className="m-auto">
         <hgroup className="text-center mb-4 text-gray-700">
-          <h1 className="text-4xl">Tabela Fipe</h1>
-          <h2 className="text-2xl">Consulte o valor de um veículo de forma gratuita</h2>
+          <h1 className="text-2xl font-bold md:text-4xl md:font-normal">Tabela Fipe</h1>
+          <h2 className="text-xl md:text-2xl">
+            Consulte o valor de um veículo de forma gratuita
+          </h2>
         </hgroup>
 
-        <Card className="p-10 w-1/2 m-auto">
+        <Card className="p-5 md:p-10 w-full lg:w-1/2 m-auto">
           <FipeForm brands={brands} />
         </Card>
       </Container>
