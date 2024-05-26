@@ -17,7 +17,7 @@ type Props = {
   brands: { codigo: string; nome: string }[]
 }
 
-const url = "https://parallelum.com.br/fipe/api/v1/carros/marcas"
+const url = process.env.NEXT_PUBLIC_API_URL
 
 export function FipeForm({ brands }: Props) {
   const router = useRouter()
@@ -34,8 +34,9 @@ export function FipeForm({ brands }: Props) {
   const [loading, setLoading] = useState({
     models: false,
     years: false,
+    submit: false,
   })
-  function handleLoading(key: "models" | "years", value: boolean) {
+  function handleLoading(key: "models" | "years" | "submit", value: boolean) {
     setLoading((prev) => ({
       ...prev,
       [key]: value,
@@ -96,7 +97,14 @@ export function FipeForm({ brands }: Props) {
   const submitBtnDisabled = !brand || !model || !year
 
   const onSubmit: SubmitHandler<FormProps> = async ({ brand, model, year }) => {
-    router.push(`result?marca=${brand}&modelo=${model}&ano=${year}`)
+    try {
+      handleLoading("submit", true)
+      router.push(`result?marca=${brand}&modelo=${model}&ano=${year}`)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      handleLoading("submit", false)
+    }
   }
 
   useEffect(() => {
@@ -163,7 +171,7 @@ export function FipeForm({ brands }: Props) {
         form="fipe-form"
         disabled={submitBtnDisabled}
       >
-        Consultar preço
+        {loading.submit ? "Carregando..." : "Consultar"}
       </Button>
     </form>
   )
