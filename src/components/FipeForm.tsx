@@ -22,17 +22,20 @@ const url = process.env.API_URL as string
 
 export function FipeForm({ brands }: Props) {
   const router = useRouter()
-  const { register, handleSubmit, watch, setValue, resetField } = useForm<FormProps>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset: resetForm,
+  } = useForm<FormProps>()
+
   const [options, setOptions] = useState({
     models: [],
     years: [],
   })
 
   let [isSubmiting, startTransition] = useTransition()
-
-  const brand = watch("brand", null)
-  const model = watch("model", null)
-  const year = watch("year", null)
 
   const [loading, setLoading] = useState({
     models: false,
@@ -44,6 +47,10 @@ export function FipeForm({ brands }: Props) {
       [key]: value,
     }))
   }
+
+  const brand = watch("brand", null)
+  const model = watch("model", null)
+  const year = watch("year", null)
 
   async function getModels() {
     try {
@@ -82,7 +89,18 @@ export function FipeForm({ brands }: Props) {
   }
 
   useEffect(() => {
-    if (brand) getModels()
+    if (brand) {
+      getModels()
+    }
+
+    if (!brand) {
+      resetForm()
+
+      setOptions({
+        models: [],
+        years: [],
+      })
+    }
   }, [brand])
 
   useEffect(() => {
@@ -108,18 +126,6 @@ export function FipeForm({ brands }: Props) {
     }
   }
 
-  useEffect(() => {
-    if (!brand) {
-      resetField("model")
-      resetField("year")
-
-      setOptions({
-        models: [],
-        years: [],
-      })
-    }
-  }, [brand])
-
   return (
     <form
       id="fipe-form"
@@ -133,6 +139,7 @@ export function FipeForm({ brands }: Props) {
         onChange={(_, value) => {
           if (!value) return setValue("brand", value)
 
+          resetForm()
           setValue("brand", value.value)
         }}
       />
@@ -153,6 +160,7 @@ export function FipeForm({ brands }: Props) {
       {showYearInput && (
         <SelectInput
           {...register("year")}
+          key={model}
           label={loading.years ? "Carregando..." : "Ano"}
           disabled={loading.years}
           options={yearOptions}
