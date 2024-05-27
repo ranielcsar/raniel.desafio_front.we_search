@@ -37,14 +37,14 @@ export default async function ResultPage({
 function BackBtn() {
   return (
     <Link
-      className="flex items-center gap-2 text-lg self-start hover:text-green-emereald transition-colors"
+      className="group flex items-center gap-2 text-lg self-start font-bold hover:text-green-emereald transition-colors"
       href="/"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        className="bi bi-chevron-left fill-gray-700"
+        width="25"
+        height="25"
+        className="bi bi-chevron-left fill-gray-700 group-hover:fill-green-emereald transition-colors"
         viewBox="0 0 16 16"
       >
         <path
