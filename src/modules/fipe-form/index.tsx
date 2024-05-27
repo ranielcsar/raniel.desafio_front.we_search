@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import { SelectInput } from "@/components/SelectInput"
 import { Button } from "@/components/Button"
 import { useFipeContext } from "@/contexts/AppContext"
+import { CircularProgress } from "@mui/material"
 
 type FormProps = {
   brand: string | null
@@ -22,11 +23,19 @@ export function FipeForm({ brands }: Props) {
   const router = useRouter()
   const { updateCarOptions } = useFipeContext()
 
-  const { register, handleSubmit, watch, setValue, resetField } = useForm<FormProps>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset: resetForm,
+  } = useForm<FormProps>()
   const [options, setOptions] = useState({
     models: [],
     years: [],
   })
+
+  const [isSubmiting, startTransition] = useTransition()
 
   const brand = watch("brand", null)
   const model = watch("model", null)
@@ -79,6 +88,14 @@ export function FipeForm({ brands }: Props) {
     }
   }
 
+  function resetFormAndOptions() {
+    resetForm()
+    setOptions({
+      models: [],
+      years: [],
+    })
+  }
+
   useEffect(() => {
     if (brand) getModels()
   }, [brand])
@@ -87,7 +104,7 @@ export function FipeForm({ brands }: Props) {
     if (model) getYears()
   }, [model])
 
-  const brandOptions = optionsWithLabelAndValue(brands)
+  const brandOptions = useMemo(() => optionsWithLabelAndValue(brands), [])
   const modelOptions = optionsWithLabelAndValue(options.models)
   const yearOptions = optionsWithLabelAndValue(options.years)
 
@@ -100,20 +117,10 @@ export function FipeForm({ brands }: Props) {
     if (!brand || !model || !year) return
 
     updateCarOptions({ brand, model, year })
-    router.push("/result")
+    startTransition(() => {
+      router.push("/result")
+    })
   }
-
-  useEffect(() => {
-    if (!brand) {
-      resetField("model")
-      resetField("year")
-
-      setOptions({
-        models: [],
-        years: [],
-      })
-    }
-  }, [brand])
 
   return (
     <form
@@ -126,9 +133,8 @@ export function FipeForm({ brands }: Props) {
         label="Marca"
         options={brandOptions}
         onChange={(_, value) => {
-          if (!value) return setValue("brand", value)
-
-          setValue("brand", value.value)
+          resetFormAndOptions()
+          setValue("brand", value ? value.value : value)
         }}
       />
 
@@ -139,35 +145,32 @@ export function FipeForm({ brands }: Props) {
         options={modelOptions}
         disabled={disabledModels || loading.models}
         onChange={(_, value) => {
-          if (!value) return setValue("model", value)
-
-          setValue("model", value.value)
+          setValue("model", value ? value.value : value)
         }}
       />
 
       {showYearInput && (
         <SelectInput
           {...register("year")}
+          key={model}
           label={loading.years ? "Carregando..." : "Ano"}
           disabled={loading.years}
           options={yearOptions}
           onChange={(_, value) => {
-            if (!value) return setValue("year", value)
-
-            setValue("year", value.value)
+            setValue("year", value ? value.value : value)
           }}
         />
       )}
 
       <Button
-        className="w-max m-auto mt-4 py-2 px-8 normal-case"
+        className="w-max m-auto mt-4 py-2 px-8 normal-case text-white"
         size="large"
         variant="contained"
         type="submit"
         form="fipe-form"
-        disabled={submitBtnDisabled}
+        disabled={submitBtnDisabled || isSubmiting}
       >
-        Consultar preço
+        {isSubmiting ? <CircularProgress size={30} color="inherit" /> : "Consultar preço"}
       </Button>
     </form>
   )
