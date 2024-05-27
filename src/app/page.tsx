@@ -1,4 +1,4 @@
-import { FipeForm } from "@/components/FipeForm"
+import { FipeForm } from "@/modules/fipe-form"
 import { Container, Card } from "@mui/material"
 
 export default async function Home() {
