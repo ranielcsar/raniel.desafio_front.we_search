@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import { SelectInput } from "@/components/SelectInput"
-import { Button } from "./Button"
+import { Button } from "@/components/Button"
 import { CircularProgress } from "@mui/material"
 
 type FormProps = {
@@ -88,26 +88,23 @@ export function FipeForm({ brands }: Props) {
     }
   }
 
+  function resetFormAndOptions() {
+    resetForm()
+    setOptions({
+      models: [],
+      years: [],
+    })
+  }
+
   useEffect(() => {
-    if (brand) {
-      getModels()
-    }
-
-    if (!brand) {
-      resetForm()
-
-      setOptions({
-        models: [],
-        years: [],
-      })
-    }
+    if (brand) getModels()
   }, [brand])
 
   useEffect(() => {
     if (model) getYears()
   }, [model])
 
-  const brandOptions = optionsWithLabelAndValue(brands)
+  const brandOptions = useMemo(() => optionsWithLabelAndValue(brands), [])
   const modelOptions = optionsWithLabelAndValue(options.models)
   const yearOptions = optionsWithLabelAndValue(options.years)
 
@@ -137,10 +134,8 @@ export function FipeForm({ brands }: Props) {
         label="Marca"
         options={brandOptions}
         onChange={(_, value) => {
-          if (!value) return setValue("brand", value)
-
-          resetForm()
-          setValue("brand", value.value)
+          resetFormAndOptions()
+          setValue("brand", value ? value.value : value)
         }}
       />
 
@@ -151,9 +146,7 @@ export function FipeForm({ brands }: Props) {
         options={modelOptions}
         disabled={disabledModels || loading.models}
         onChange={(_, value) => {
-          if (!value) return setValue("model", value)
-
-          setValue("model", value.value)
+          setValue("model", value ? value.value : value)
         }}
       />
 
@@ -165,9 +158,7 @@ export function FipeForm({ brands }: Props) {
           disabled={loading.years}
           options={yearOptions}
           onChange={(_, value) => {
-            if (!value) return setValue("year", value)
-
-            setValue("year", value.value)
+            setValue("year", value ? value.value : value)
           }}
         />
       )}
